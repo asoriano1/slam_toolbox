@@ -90,7 +90,7 @@ slam_toolbox::IntensityGrid* SMapper::getIntensityGrid(const double & resolution
   // For each scan update the intensity grid
   const auto & scans = mapper_->GetAllProcessedScans();
   for (auto scan : scans) {
-    slam_toolbox::updateIntensityGridFromScan(scan, occ_grid, *intensity_grid);
+    slam_toolbox::updateIntensityGridFromScan(scan, occ_grid, *intensity_grid, min_intensity_threshold_);
   }
 
   delete occ_grid;
@@ -383,6 +383,17 @@ void SMapper::configure(const rclcpp::Node::SharedPtr & node)
   }
   node->get_parameter("use_response_expansion", use_response_expansion);
   mapper_->setParamUseResponseExpansion(use_response_expansion);
+
+  double min_intensity_threshold = 40;
+  if (!node->has_parameter("min_intensity_threshold")) {
+    node->declare_parameter("min_intensity_threshold", min_intensity_threshold);
+    RCLCPP_WARN(node->get_logger(),
+      "The minimum intesity threshold value has been not specified,"
+      "it will be set to default value 40");
+  }
+  node->get_parameter("min_intensity_threshold", min_intensity_threshold);
+  min_intensity_threshold_ = min_intensity_threshold;
+
 }
 
 /*****************************************************************************/
