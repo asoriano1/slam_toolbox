@@ -57,7 +57,7 @@ bool MapSaver::saveMapCallback(
     return false;
   }
 
-  const std::string name = req->name.data;
+  std::string name = req->name.data;
   std::string set_namespace;
   const std::string namespace_str = std::string(node_->get_namespace());
   if (!namespace_str.empty()) {
@@ -65,9 +65,17 @@ bool MapSaver::saveMapCallback(
   }
 
   if (name != "") {
+    std::string map_sufix = map_name_;
+    std::replace(map_sufix.begin(), map_sufix.end(), '/','_');
+    if (!map_sufix.empty() && map_sufix[0] == '_')
+        map_sufix.erase(0, 1);
+    name = name + "_" + map_sufix;
     RCLCPP_INFO(node_->get_logger(),
-      "SlamToolbox: Saving map as %s.", name.c_str());
-    int rc = system(("ros2 run nav2_map_server map_saver_cli -f " + name  + " --ros-args -p map_subscribe_transient_local:=true" + set_namespace).c_str());
+      "SlamToolbox: Saving map %s as %s.", map_name_.c_str(), name.c_str());
+    int rc = system(("ros2 run nav2_map_server map_saver_cli "
+      "-f " + name  +
+      " -t " + namespace_str + map_name_ +
+      " --ros-args -p map_subscribe_transient_local:=true" + set_namespace).c_str());
     if (rc == 0) {
       response->result = response->RESULT_SUCCESS;
     } else {
@@ -75,8 +83,10 @@ bool MapSaver::saveMapCallback(
     }
   } else {
     RCLCPP_INFO(node_->get_logger(),
-      "SlamToolbox: Saving map in current directory.");
-    int rc = system(("ros2 run nav2_map_server map_saver_cli --ros-args -p map_subscribe_transient_local:=true" + set_namespace).c_str());
+      "SlamToolbox: Saving map %s in current directory.", map_name_.c_str());
+    int rc = system(("ros2 run nav2_map_server map_saver_cli "
+      " -t " + namespace_str + map_name_ +
+      " --ros-args -p map_subscribe_transient_local:=true" + set_namespace).c_str());
     if (rc == 0) {
       response->result = response->RESULT_SUCCESS;
     } else {

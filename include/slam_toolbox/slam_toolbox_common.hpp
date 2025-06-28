@@ -165,7 +165,7 @@ protected:
   std::unique_ptr<laser_utils::LaserAssistant> laser_assistant_;
   std::unique_ptr<pose_utils::GetPoseHelper> pose_helper_;
   std::unique_ptr<map_saver::MapSaver> map_saver_;
-  std::unique_ptr<intensity_map_saver::IntensityMapSaver> intensity_map_saver_;
+  std::unique_ptr<map_saver::MapSaver> intensity_map_saver_;
   std::unique_ptr<loop_closure_assistant::LoopClosureAssistant> closure_assistant_;
   std::unique_ptr<laser_utils::ScanHolder> scan_holder_;
 

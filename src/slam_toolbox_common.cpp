@@ -64,7 +64,7 @@ void SlamToolbox::configure()
   if (use_map_saver_) {
     map_saver_ = std::make_unique<map_saver::MapSaver>(shared_from_this(),
         map_name_);
-    intensity_map_saver_ = std::make_unique<intensity_map_saver::IntensityMapSaver>(shared_from_this(),
+    intensity_map_saver_ = std::make_unique<map_saver::MapSaver>(shared_from_this(),
         intensity_map_name_);
   }
   closure_assistant_ =
